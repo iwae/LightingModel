@@ -1,5 +1,5 @@
 # Basic Lighting Models
-Created with Cocos Creator 3.8 （https://www.cocos.com/en/creator-download）
+Created with Cocos Creator 3.8 （ https://www.cocos.com/en/creator-download ）
 
 Preview: http://learncocos.com/lightmodel
 
