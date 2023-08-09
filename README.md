@@ -12,8 +12,8 @@ The unlit model does not consider the effects of lighting and directly renders t
 ```glsl
 void main()
 {
-vec4 o = mainColor; // Material color
-return CCFragOutput(o);
+    vec4 o = mainColor; // Material color
+    return CCFragOutput(o);
 }
 ```
 ## Lambert Model
@@ -23,12 +23,12 @@ The Lambert model is a lighting model that describes diffuse reflection, assumin
 
 void Lambert(inout vec4 diffuseColor, in vec3 normal)
 {
-vec3 N = normalize(normal);
-vec3 L = normalize(cc_mainLitDir.xyz * -1.0);
-float NL = max(dot(N, L), 0.0);
-vec3 diffuse = NL * (diffuseColor.rgb * cc_mainLitColor.xyz);
-vec3 ambient = cc_ambientGround.rgb * diffuseColor.rgb * cc_ambientSky.w;
-diffuseColor.rgb = ambient + diffuse;
+    vec3 N = normalize(normal);
+    vec3 L = normalize(cc_mainLitDir.xyz * -1.0);
+    float NL = max(dot(N, L), 0.0);
+    vec3 diffuse = NL * (diffuseColor.rgb * cc_mainLitColor.xyz);
+    vec3 ambient = cc_ambientGround.rgb * diffuseColor.rgb * cc_ambientSky.w;
+    diffuseColor.rgb = ambient + diffuse;
 }
 ```
 ## Half Lambert Model
@@ -37,12 +37,12 @@ The Half Lambert model is a variant of the Lambert model. It changes the interpr
 ```glsl
 void HalfLambert(inout vec4 diffuseColor, in vec3 normal)
 {
-vec3 N = normalize(normal);
-vec3 L = normalize(cc_mainLitDir.xyz * -1.0);
-float NL = max(dot(N, L), 0.0);
-vec3 diffuse = pow(NL * diffuseWrap + (1.-diffuseWrap),2.0) * (diffuseColor.rgb * cc_mainLitColor.xyz);
-vec3 ambient = cc_ambientGround.rgb * diffuseColor.rgb * cc_ambientSky.w;
-diffuseColor.rgb = ambient + diffuse;
+    vec3 N = normalize(normal);
+    vec3 L = normalize(cc_mainLitDir.xyz * -1.0);
+    float NL = max(dot(N, L), 0.0);
+    vec3 diffuse = pow(NL * diffuseWrap + (1.-diffuseWrap),2.0) * (diffuseColor.rgb * cc_mainLitColor.xyz);
+    vec3 ambient = cc_ambientGround.rgb * diffuseColor.rgb * cc_ambientSky.w;
+    diffuseColor.rgb = ambient + diffuse;
 }
 ```
 
@@ -52,29 +52,27 @@ The Blinn-Phong model is an improved version of the Phong model. It introduces t
 ```glsl
 void blinnPhong(inout vec4 diffuseColor, in vec3 normal)
 {
-vec3 N = normalize(normal);
-vec3 L = normalize(cc_mainLitDir.xyz * -1.0);
-float NL = max(dot(N, L), 0.0);
-vec3 diffuse = NL * diffuseColor.rgb * cc_mainLitColor.xyz;
-vec3 position;
-HIGHP_VALUE_FROM_STRUCT_DEFINED(position, v_position);
-vec3 cameraPosition = cc_cameraPos.xyz / cc_cameraPos.w;
-vec3 V = normalize(cameraPosition - position);
-vec3 H = normalize(L + V);
-float specularFactor = pow(max(0.0, dot(H,N)), bpParams.x * 50.);
-vec3 specular = (specularFactor * cc_ambientSky.rgb * cc_mainLitColor.xyz);
-float shadowCtrl = 1.0;
-#if CC_RECEIVE_SHADOW && CC_SHADOW_TYPE == CC_SHADOW_MAP
-if (NL > 0.0) {
-#if CC_DIR_LIGHT_SHADOW_TYPE == CC_DIR_LIGHT_SHADOW_CASCADED
-shadowCtrl = CCCSMFactorBase(position, N, v_shadowBias);
-#endif
-#if CC_DIR_LIGHT_SHADOW_TYPE == CC_DIR_LIGHT_SHADOW_UNIFORM
-shadowCtrl = CCShadowFactorBase(CC_SHADOW_POSITION, N, v_shadowBias);
-#endif
-}
-#endif
-diffuse = (diffuse + specular) * (shadowCtrl);
+    vec3 N = normalize(normal);
+    vec3 L = normalize(cc_mainLitDir.xyz * -1.0);
+    float NL = max(dot(N, L), 0.0);
+    vec3 diffuse = NL * diffuseColor.rgb * cc_mainLitColor.xyz;
+    vec3 position;
+    HIGHP_VALUE_FROM_STRUCT_DEFINED(position, v_position);
+    vec3 cameraPosition = cc_cameraPos.xyz / cc_cameraPos.w;
+    vec3 V = normalize(cameraPosition - position);
+    vec3 H = normalize(L + V);
+    float specularFactor = pow(max(0.0, dot(H,N)), bpParams.x * 50.);
+    vec3 specular = (specularFactor * cc_ambientSky.rgb * cc_mainLitColor.xyz);
+    float shadowCtrl = 1.0;
+    #if CC_RECEIVE_SHADOW && CC_SHADOW_TYPE == CC_SHADOW_MAP
+        #if CC_DIR_LIGHT_SHADOW_TYPE == CC_DIR_LIGHT_SHADOW_CASCADED
+        shadowCtrl = CCCSMFactorBase(position, N, v_shadowBias);
+        #endif
+        #if CC_DIR_LIGHT_SHADOW_TYPE == CC_DIR_LIGHT_SHADOW_UNIFORM
+        shadowCtrl = CCShadowFactorBase(CC_SHADOW_POSITION, N, v_shadowBias);
+        #endif
+    #endif
+    diffuse = (diffuse + specular) * (shadowCtrl);
 }
 ```
 ## Toon Model
