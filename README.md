@@ -1,4 +1,5 @@
-# LightingModel
+# Basic Lighting Models
+Created with Cocos Creator 3.8 （https://www.cocos.com/en/creator-download）
 Preview: http://learncocos.com/lightmodel
 
 ![image](https://github.com/iwae/LightingModel/assets/26038745/4173da1d-33f0-41c4-8a72-e27021d1aa39)
